@@ -1,0 +1,82 @@
+{
+  "mysql": {
+    "host": "localhost",
+    "port": 3306,
+    "database": "test",
+    "user": "test",
+    "password": "6IRo6oYO2AYO",
+    "useSSL": false
+  },
+  "votes": {
+    "time-per-vote": "1 hour"
+  },
+
+  "npc": {
+    "name": "&aВыбор сервера &6| &dSkyWars",
+    "position": {
+      "x": 150.5,
+      "y": 90,
+      "z": 16.5,
+      "world": "pepej"
+    },
+    "skin": {
+      "data": "ewogICJ0aW1lc3RhbXAiIDogMTYwODcyMDQxODUwNywKICAicHJvZmlsZUlkIiA6ICIzOWEzOTMzZWE4MjU0OGU3ODQwNzQ1YzBjNGY3MjU2ZCIsCiAgInByb2ZpbGVOYW1lIiA6ICJkZW1pbmVjcmFmdGVybG9sIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzY1N2UzYjZhNTg5OWIyZDFkMTllNTUzY2E4MjdjMGFlZGFhODExNGQ1ZjRlYzdkYWI1MDExYTZlYzQ0ODFiZWMiCiAgICB9CiAgfQp9",
+      "signature": "DjA7pkwGYgojtrOAnoxXm016SPYyHPBDqNeUIk+6Qj5qF7h/OOZDnUZriifHl+hYzknSR6gJ2tj5IhUMnkleSBUqBbI6tbFnv07vkAEsw6PCeVVIP/YEmoIRroZmRKs12fL0fu8qybZcyBBlIOJoZLy/hRaj0fk+foFGX8CmTiy675PF9uowwu5AuwA1waL9t2mnDzy3tEwE5lmI2XVDIg9j5m8ipgoljjclbNFXv1aQIi8SE1UvAVEdXoylw+nOynbkvwU1y/kxvQOXAiKVxS4FbllOOD1gCzBiDuwm9V/We5gIHFY3c2mqClL05yA/+n8qSqiRtpVI2CCrofq5MT6+noWyO/guBzp5sjQLD5YBBK/JA9JA4KsoMPG7G16WVLU7dFff9lf4zsiGD++2l65UB4ob+tWUblJwmt8H0Q325GbVAsqUfJpvm3aqwhAdbLllBJuCaxFT/QRvJ22zPqmw00+R4iVK87C8HHhPn3yDmGq0GCI9lLYzXcTNcTnUteLYGxwYNPr97Ds45gz00huWkKSBvcKdJe0xmsEHcq/mq8fdBjlXuc1zyhn1oN2/lXKa2ZsfCfYwASqGlXCGDN0qoXLRwRgnYn4mQpDCC8rWVsnHO2HDJVD7vey9VVJdDVbTDj6mhsGwY/iJ3k/4pBaM0WUpARbM8QirwN+vsSM="
+    }
+  },
+  "map": "Онион",
+  "islands": [
+    {
+      "id": 1,
+      "spawns": [
+        {
+          "id": 1,
+          "position": {
+            "x": -311.5,
+            "y": 85,
+            "z": -36.5,
+            "world": "pepej"
+          }
+        }
+      ],
+      "chests": [
+        {
+          "id": 1,
+          "position": {
+            "x": -313.5,
+            "y": 83,
+            "z": -60.5,
+            "world": "pepej"
+          },
+          "rarity": "COMMON"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "spawns": [
+        {
+          "id": 1,
+          "position": {
+            "x": -311.5,
+            "y": 85.2,
+            "z": -36.5,
+            "world": "pepej"
+          }
+        }
+      ],
+      "chests": [
+        {
+          "id": 1,
+          "position": {
+            "x": -311.5,
+            "y": 86,
+            "z": -33.5,
+            "world": "pepej"
+          },
+          "rarity": "MIDDLE"
+        }
+      ]
+    }
+  ]
+}

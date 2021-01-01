@@ -1,0 +1,60 @@
+[
+  {
+    "name": "Ricardo Milos",
+    "texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjcyNmU1YmMzOGFjYWE2YTAyOWVlZWRmNTE3ZjcwNGJiODBlOTg0N2ViOTU0ZjNjMDY3YjU4YTA0YmM4MWRhOSJ9fX0="
+  },
+  {
+    "name": "Red Arrow Left",
+    "texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjg0ZjU5NzEzMWJiZTI1ZGMwNThhZjg4OGNiMjk4MzFmNzk1OTliYzY3Yzk1YzgwMjkyNWNlNGFmYmEzMzJmYyJ9fX0="
+  },
+  {
+    "name": "Yellow",
+    "texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzY0MTY4MmY0MzYwNmM1YzlhZDI2YmM3ZWE4YTMwZWU0NzU0N2M5ZGZkM2M2Y2RhNDllMWMxYTI4MTZjZjBiYSJ9fX0="
+  },
+  {
+    "name": "Green",
+    "texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGU5YjI3ZmNjZDgwOTIxYmQyNjNjOTFkYzUxMWQwOWU5YTc0NjU1NWU2YzljYWQ1MmU4NTYyZWQwMTgyYTJmIn19fQ=="
+  },
+  {
+    "name": "Purple",
+    "texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTMyYWUyY2I4ZDJhZTYxNTE0MWQyYzY1ODkyZjM2NGZjYWRkZjczZmRlYzk5YmUxYWE2ODc0ODYzZWViNWMifX19"
+  },
+  {
+    "name": "Magenta",
+    "texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2VmMGM1NzczZGY1NjBjYzNmYzczYjU0YjVmMDhjZDY5ODU2NDE1YWI1NjlhMzdkNmQ0NGYyZjQyM2RmMjAifX19"
+  },
+  {
+    "name": "Red",
+    "texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWZkZTNiZmNlMmQ4Y2I3MjRkZTg1NTZlNWVjMjFiN2YxNWY1ODQ2ODRhYjc4NTIxNGFkZDE2NGJlNzYyNGIifX19"
+  },
+  {
+    "name": "White",
+    "texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2UzYWNjNzhiNjI0YzA3MDg0OTE4NGUwYTI2NmQ5ZTk5YWE2NzFmYjNlMzhkNjZjMmMzYzUxOTExOTQ3OTMifX19"
+  },
+  {
+    "name": "Night Globe",
+    "texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjNiYWIxNGQ1ZGUwM2QyMWNjYjRiMWIzODU5MjQ0Y2Q5MDQ4YzQ0MzkxOGM5YmM0NTI4YmEzNzhiMGJmYWQ5NiJ9fX0="
+  },
+  {
+    "name": "Midnight Blue",
+    "texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjU2NzYxYjU3MmNmZTIyYmEzNDVkYzdhZDA2NmEwNzliZDQ1YTczNjU1NjdjMjI2MTE0YTY3ZmQ3ZGJhODMifX19"
+  },
+  {
+    "name": "Explosive Crate",
+    "texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzk2ODEyZjI4M2UwMTRkYmYzZmNhYjkxODQ4ZGU1NDVkMWEwYzQ4NjZkODI0ZmQxODUxZjZmZWJmZDE3NjVkZSJ9fX0="
+  },
+  {
+    "name": "Explosive Crate Active",
+    "texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWFmOGM4NzQ3NDc5YzZiOTUwZWVhNDU2ZjNiMTdkNTE3Yjc3OGVkMjEzZTdkM2E0OGU2YWZhMmMwNzFiZTRlNiJ9fX0="
+  },
+  {
+    "name": "Grass Orb",
+    "texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzdlOGNiNTdmZTc5MGU5NjVlM2NmYTZjNGZiYzE2ZTMyMjYyMTBkNjVmNTYxNGU4ODUzZmE5ZmI4NDA3NDQ0MSJ9fX0="
+  },
+  {
+    "name": "Like",
+    "texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTAzY2NmMDI4YzYxYzJkZmY0NDM3NTc4Y2U3MWUxNTUwNDc4MTg1YjU0ZmM5NGM1OTI3ZjBmMDZmOTY2MjczYSJ9fX0="
+  }
+]
+
+
