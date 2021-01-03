@@ -29,24 +29,16 @@ class IslandSelectorMenu(player: Player) : Gui(player, 3, "&6Выберите о
         Island.islands.forEach {
             val builder = ItemStackBuilder.of(StandardSchemeMappings.HARDENED_CLAY.get(13).get().itemStack)
                 .name("&6Остров &c#${it.id}")
-                .loreUnique("&a${it.users?.size ?: 0}&6/&a${it.spawns.size}")
-            it.users?.forEach { u ->
-                builder.loreUnique("&7${u.username}")
-            }
+//                .loreUnique("&a${it.users.size}&6/&a${it.spawns.size}")
+//            it.users.forEach { u ->
+//                builder.loreUnique("&7${u.username}")
+//            }
 
-            populator.accept(builder.data(if (it.isFull) 14 else if (user.island == it) 4 else 13)
+            populator.accept(builder.data(if (it.users.size >= it.spawns.size) 14 else if (user.island == it) 4 else 13)
                 .buildConsumer { _ ->
-                    if (it.users == null) {
-                        it.users = mutableListOf(user)
+                    if (!it.users.contains(user)) {
                         instance.game.join(user, it)
                         player.closeInventory()
-                    } else {
-                        if (it.users?.contains(user) == false) {
-                            println(3)
-
-                            instance.game.join(user, it)
-                            player.closeInventory()
-                        }
                     }
                 })
         }

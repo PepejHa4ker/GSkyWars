@@ -34,12 +34,14 @@ class UserManager : TerminableModule {
     }
 
     private fun loadUser(player: Player): User {
-        if (!userAdapter.userExists(player.uniqueId.toStr())) {
-            instance.server.consoleSender.msg("Создаю контейнер для пользователя &c#${player.uniqueId.toStr()}...")
-            userAdapter.createUser(player.uniqueId.toStr(), player.name)
+        val id = player.uniqueId.toStr()
+        if (!userAdapter.userExists(id)) {
+            instance.server.consoleSender.msg("Создаю контейнер для пользователя &c#$id...")
+            userAdapter.createUser(id, player.name)
         }
-        val user = userAdapter.getUser(player.uniqueId.toStr()) ?: User(player.uniqueId, player.name)
-        user.kits = userAdapter.getKits(player.uniqueId.toStr())
+        val user = userAdapter.getUser(id) ?: User(player.uniqueId, player.name)
+        user.trails = userAdapter.getTrails(id)
+        user.kits = userAdapter.getKits(id)
         users.add(user)
         return user
     }
@@ -51,11 +53,11 @@ class UserManager : TerminableModule {
         merge(
             PlayerEvent::class.java,
             PlayerQuitEvent::class.java,
-            PlayerKickEvent::class.java
-        )
+            PlayerKickEvent::class.java)
             .handler {
-                -it.player.asUser()
-
+                val user = it.player.asUser()
+                instance.game.leave(user)
+                -user
             }
             .bindWith(consumer)
     }

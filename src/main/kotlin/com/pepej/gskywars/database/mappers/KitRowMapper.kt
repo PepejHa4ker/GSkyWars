@@ -1,4 +1,4 @@
-package com.pepej.gskywars.database.kit
+package com.pepej.gskywars.database.mappers
 
 import com.pepej.gskywars.model.Kit
 import org.jdbi.v3.core.mapper.RowMapper

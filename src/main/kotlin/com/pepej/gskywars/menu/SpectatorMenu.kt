@@ -106,7 +106,7 @@ class SpectatorMenu(player: Player) : Gui(player, 3, "Меню наблюдат�
                             teleport(user.toPlayer.location)
                             closeInventory()
                         }
-                    }, { VoteMenu(player).open() })
+                    }, { VoteMenu().open() })
             )
         }
         val firstLvl = ItemStackBuilder.head(Head.findByName("Green").texture)
@@ -210,20 +210,12 @@ class SpectatorMenu(player: Player) : Gui(player, 3, "Меню наблюдат�
         }
     }
 
-    private inner class VoteMenu(player: Player) : InnerGui(player, 3, "Голосование") {
+    private inner class VoteMenu(override val previous: Gui = SpectatorMenu(player)) : InnerGui(player, 3, "Голосование") {
 
         private val scheme: MenuScheme = MenuScheme()
             .maskEmpty(1)
             .mask("111111111")
             .mask("111111111")
-
-
-        override val previous: Gui
-            get() = SpectatorMenu(player)
-
-        override val next: Gui?
-            get() = null
-
 
         override fun redraw() {
             super.redraw()

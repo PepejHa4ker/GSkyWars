@@ -2,6 +2,7 @@ package com.pepej.gskywars.database.user
 
 import com.pepej.gskywars.database.DatabaseManager
 import com.pepej.gskywars.model.Kit
+import com.pepej.gskywars.model.Trail
 import com.pepej.gskywars.model.User
 
 class UserAdapter {
@@ -28,16 +29,25 @@ class UserAdapter {
         return userDao.getKits(id)
     }
 
-    fun updateKits(id: String, kitId: Int) {
-        return userDao.updateKits(id, kitId)
+    fun getTrails(id: String): MutableList<Trail?> {
+        return userDao.getTrails(id)
+    }
+
+    fun updateTrail(id: String, trail: Trail) {
+        userDao.updateTrail(id, trail)
+    }
+
+
+    fun updateKit(id: String, kitId: Int) {
+        return userDao.updateKit(id, kitId)
     }
 
     fun createUser(id: String, username: String) {
        userDao.createUser(id, username)
     }
 
-    fun updateUser(id: String, new: User) {
-        userDao.updateUser(id, new.activeKit, new.reputation, new.lastVoteTimeStamp, new.games, new.wins, new.kills, new.deaths, new.arrowsFired, new.blocksPlaced, new.blocksBroken)
+    fun updateUser(user: User) {
+        userDao.updateUser(user)
     }
 
     fun deleteUser(id: String) {

@@ -11,6 +11,7 @@ import com.pepej.gskywars.managers.IslandManager
 import com.pepej.gskywars.managers.NpcManager
 import com.pepej.gskywars.managers.UserManager
 import com.pepej.gskywars.model.Head
+import com.pepej.gskywars.model.Trail
 import com.pepej.gskywars.model.User
 import com.pepej.papi.ap.Plugin
 import com.pepej.papi.ap.PluginDependency
@@ -33,18 +34,15 @@ class GSkyWars : PapiJavaPlugin() {
         private set
     lateinit var config: Config
         private set
-    private val resources = listOf("config", "assets/heads").map { it.plus(".json") }
+    private val resources = listOf("config", "assets/heads", "assets/trails").map { it.plus(".json") }
 
 
     override fun onPluginLoad() {
         instance = this
-        for (resource in resources) {
-            saveResource(resource, false)
-        }
+        resources.forEach { saveResource(it, false) }
         Head.load(File(dataFolder, "assets/heads.json"))
+        Trail.load(File(dataFolder, "assets/trails.json"))
         config = Config(File(dataFolder, "config.json"))
-
-
     }
 
     override fun onPluginEnable() {
@@ -53,10 +51,10 @@ class GSkyWars : PapiJavaPlugin() {
         bind(databaseAdapter)
         game = Game()
         NpcManager()
+        IslandManager()
         userManager = UserManager()
         bindModule(GSkyWarsEventListener())
         bindModule(GSkyWarsCommands())
-        bindModule(IslandManager())
         bindModule(userManager)
         bindModule(GiantKit())
         bindModule(TrollKit())
@@ -64,7 +62,7 @@ class GSkyWars : PapiJavaPlugin() {
     }
 
     override fun onPluginDisable() {
-        UserManager.users.forEach(User::unaryMinus)
+        UserManager.users.forEach(User::save)
     }
 
     companion object {

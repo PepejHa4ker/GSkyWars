@@ -6,10 +6,12 @@ import com.pepej.gskywars.managers.UserManager
 import com.pepej.gskywars.model.Island
 import com.pepej.gskywars.model.Kit
 import com.pepej.gskywars.model.User
+import com.pepej.gskywars.utils.TimeUtils
 import com.pepej.gskywars.utils.asUser
 import com.pepej.gskywars.utils.msg
 import com.pepej.papi.Services
 import com.pepej.papi.metadata.Metadata.provideForPlayer
+import com.pepej.papi.random.RandomSelector
 import com.pepej.papi.scheduler.Schedulers
 import com.pepej.papi.scheduler.Task
 import com.pepej.papi.scoreboard.Scoreboard
@@ -21,6 +23,7 @@ import org.bukkit.GameMode
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Player
 import org.bukkit.scoreboard.DisplaySlot
+import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.BiConsumer
@@ -33,50 +36,86 @@ class Game(
     val scoreboard: Scoreboard = Services.load(ScoreboardProvider::class.java).scoreboard,
     var alivePlayers: Int = 0,
     var spectate: Int = 0
-) {
+) : Runnable {
+
+    lateinit var gameTask: Task
+
+    var timer = AtomicInteger(15)
 
     var updater = BiConsumer { player: Player, obj: ScoreboardObjective ->
         obj.displayName = "&bSkyWars"
         val map = instance.config.rootConfigNode.getNode("map").string
         val user = player.asUser()
-        if (state == GameState.WAIT) {
-            obj.applyLines(
-                "&1",
-                "      &6$map",
-                "&2",
-                " &7Игроков: &a${joinedUsers.size}",
-                "&3",
-                "&4",
-                " &bSquareland.ru",
-            )
-        } else {
+        if (joinedUsers.contains(user)) {
+            when (state) {
+                GameState.WAIT -> {
+                    obj.applyLines(
+                        "&1",
+                        "      &6$map",
+                        "&2",
+                        " &7Игроков: &a${joinedUsers.size}",
+                        "&3",
+                        "&4",
+                        " &bSquareland.ru",
+                    )
+                }
+                GameState.END -> {
+                    obj.applyLines(
+                        "&a Игра окончена!",
+                        "&1",
+                        "&7-----&a#1 pepej&7 <-----",
+                        "&7-----&b#2PepejOffical&7-----",
+                        "&2"
+                    )
+                }
+                else -> {
 
-            obj.applyLines(
-                "&1",
-                "      &6$map",
-                "&2",
-                " &7Выживших: &a${UserManager.users.size - spectate}",
-                " &7Наблюдателей: &a$spectate",
-                " &7Убийств: &a${user.localKills}",
-                "&3",
-                "&4",
-                " &bSquareland.ru",
-            )
+                    obj.applyLines(
+                        "&1",
+                        "      &6$map",
+                        "&5",
+                        "   &b${TimeUtils.formatTime(timer.get())}",
+                        "&2",
+                        " &7Выживших: &a${UserManager.users.size - spectate}",
+                        " &7Наблюдателей: &a$spectate",
+                        " &7Убийств: &a${user.localKills}",
+                        "&3",
+                        "&4",
+                        " &bSquareland.ru",
+                    )
+                }
+            }
+        } else {
+            obj.unsubscribe(player)
         }
     }
 
     init {
-        Schedulers.async().runRepeating(
-            Runnable {
-                for (user in joinedUsers) {
-                    val obj = provideForPlayer(user.toPlayer).getOrNull(SCOREBOARD_KEY)
+        Schedulers.sync().runRepeating(this, 0, 20)
+        Schedulers.sync().runRepeating({ _ ->
+                for (player in Players.all()) {
+                    val obj = provideForPlayer(player).getOrNull(SCOREBOARD_KEY)
+
                     if (obj != null) {
-                        updater.accept(user.toPlayer, obj)
+                        updater.accept(player, obj)
+
                     }
                 }
-            }, 3,3)
+            }, 3, 3
+        )
 
 
+    }
+
+
+    override fun run() {
+        if (state == GameState.PLAY) {
+            timer.getAndDecrement()
+            if (timer.get() <= 0) {
+                end()
+
+            }
+        }
     }
 
     fun join(user: User, island: Island) {
@@ -87,19 +126,19 @@ class Game(
         }
 
         user.island = island
-        island.users?.add(user)
+        island.users.add(user)
         if (old != null) {
-            old.users?.forEach {
+            old.users.forEach {
                 user.toPlayer.hidePlayer(instance, it.toPlayer)
                 user.toPlayer.showPlayer(instance, it.toPlayer)
             }
-            island.users?.forEach {
+            island.users.forEach {
                 user.toPlayer.hidePlayer(instance, it.toPlayer)
                 user.toPlayer.showPlayer(instance, it.toPlayer)
             }
         } else {
             for (isl in Island.islands) {
-                isl.users?.forEach {
+                isl.users.forEach {
                     user.toPlayer.hidePlayer(instance, it.toPlayer)
                     user.toPlayer.showPlayer(instance, it.toPlayer)
                 }
@@ -110,12 +149,15 @@ class Game(
         provideForPlayer(user.toPlayer).put(SCOREBOARD_KEY, objective)
         joinedUsers.add(user)
         user.toPlayer.msg(Players.MessageType.ANNOUNCEMENT, "Теперь Вы играете за Остров ${island.id}")
+        if (joinedUsers.size == 2) {
+            start()
+        }
     }
 
     fun leave(user: User) {
         joinedUsers.remove(user)
         if (user.island != null) {
-            user.island!!.users?.remove(user)
+            user.island!!.users.remove(user)
             user.island = null
             if (state == GameState.PLAY) {
                 alivePlayers = UserManager.users.filter { it.island != null }.count()
@@ -125,6 +167,7 @@ class Game(
             }
         }
     }
+
 
     fun start() {
         if (state == GameState.WAIT) {
@@ -143,7 +186,7 @@ class Game(
                 timer.decrementAndGet()
 
 
-            },0,20)
+            }, 0, 20)
             Schedulers.sync().runLater({ loadChunks() }, 40)
             Schedulers.sync().runLater({ startTask() }, 5, TimeUnit.SECONDS)
 
@@ -152,36 +195,39 @@ class Game(
 
 
     fun end() {
-        state = GameState.WAIT
+        state = GameState.END
+        joinedUsers.map { it.toPlayer }.forEach { it.msg("Игра окончена") }
+        joinedUsers.forEach(this::leave)
+        Schedulers.async().runLater({ state = GameState.WAIT}, 10, TimeUnit.SECONDS)
     }
 
     private fun startTask() {
         startTime = System.currentTimeMillis()
         state = GameState.PLAY
-//        spreadInTeams()
-
+        spreadInTeams()
         var alive = 0
         Island.islands.forEach { island ->
             var spawnIndex = 0
-            island.users?.forEach {
-                spawnIndex += 1
-                val player = it.toPlayer
-                player.closeInventory()
-                player.itemOnCursor = null
-                player.noDamageTicks = 400
-                player.fallDistance = 0.0f
-//                player.teleport(island.spawnsspawnIndex % island.spawns.size].toLocation())
-                player.saturation = 10.0f
-                player.foodLevel = 20
-                player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue = 20.0
-                player.health = 20.0
-                player.fireTicks = 0
-                player.gameMode = GameMode.SURVIVAL
+            island.users.forEach {
+                it.toPlayer.apply {
+                    closeInventory()
+                    itemOnCursor = null
+                    noDamageTicks = 400
+                    fallDistance = 0.0f
+                    teleport(island.spawns[spawnIndex].position.toLocation())
+                    saturation = 10.0f
+                    foodLevel = 20
+                    getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue = 20.0
+                    health = 20.0
+                    fireTicks = 0
+                    gameMode = GameMode.SURVIVAL
+                }
                 if (it.activeKit != 0) {
                     Kit.kits.find { kit -> kit.id == it.activeKit }?.equip(it)
                 }
 
                 alive += 1
+                spawnIndex += 1
             }
         }
         alivePlayers = alive
@@ -196,6 +242,14 @@ class Game(
     }
 
     private val aliveIslands: Int
-        get() = Island.islands.filter { it.users?.isNotEmpty() == true }.count()
+        get() = Island.islands.filter { it.users.isNotEmpty() }.count()
 
+
+    private fun spreadInTeams() {
+        for (user in UserManager.users.filter { it.island == null }) {
+            val randomIsland =
+                RandomSelector.uniform(Island.islands.filterNot { it.users.size >= it.spawns.size }).pick()
+            join(user, randomIsland)
+        }
+    }
 }

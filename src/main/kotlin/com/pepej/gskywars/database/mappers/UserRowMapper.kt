@@ -1,4 +1,4 @@
-package com.pepej.gskywars.database.user
+package com.pepej.gskywars.database.mappers
 
 import com.pepej.gskywars.model.User
 import com.pepej.papi.utils.UndashedUuids
@@ -15,6 +15,7 @@ class UserRowMapper : RowMapper<User> {
         val reputation = rs.getInt("reputation")
         val lastVoteTimeStamp = rs.getLong("last_vote_timestamp")
         val activeKit = rs.getInt("active_kit")
+        val activeTrail = rs.getInt("active_trail")
         val games = rs.getInt("games")
         val wins = rs.getInt("wins")
         val kills = rs.getInt("kills")
@@ -27,6 +28,7 @@ class UserRowMapper : RowMapper<User> {
             id = id,
             username = username,
             activeKit = activeKit,
+            activeTrail = activeTrail,
             reputation = reputation,
             lastVoteTimeStamp = lastVoteTimeStamp,
             games = games,

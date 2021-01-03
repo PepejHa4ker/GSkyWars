@@ -9,8 +9,6 @@ import org.bukkit.entity.Player
 abstract class InnerGui(player: Player, lines: Int, title: String) : Gui(player, lines, title) {
 
     abstract val previous: Gui
-    abstract val next: Gui?
-
 
     override fun open() {
         val meta = Metadata.provideForPlayer(player)

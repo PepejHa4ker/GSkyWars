@@ -4,7 +4,9 @@ import com.pepej.gskywars.GSkyWars.Companion.instance
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.jdbi.v3.core.Jdbi
+import org.jdbi.v3.core.kotlin.KotlinPlugin
 import org.jdbi.v3.sqlobject.SqlObjectPlugin
+import org.jdbi.v3.sqlobject.kotlin.KotlinSqlObjectPlugin
 
 
 class DatabaseManager {
@@ -27,6 +29,8 @@ class DatabaseManager {
         hikari = HikariDataSource(hConfig)
         jdbi = Jdbi.create(hikari)
         jdbi.installPlugin(SqlObjectPlugin())
+        jdbi.installPlugin(KotlinSqlObjectPlugin())
+        jdbi.installPlugin(KotlinPlugin())
 
     }
 }

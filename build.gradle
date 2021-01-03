@@ -1,9 +1,19 @@
+buildscript {
+    repositories { jcenter() }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-serialization:1.4.21"
+    }
+}
+
 plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version '1.4.21'
     id "org.jetbrains.kotlin.kapt" version "1.4.21"
+    id 'org.jetbrains.kotlin.plugin.serialization' version "1.4.21"
     id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
+
+
 
 group 'com.pepej'
 version '1.0-SNAPSHOT'
@@ -24,9 +34,12 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
     implementation("com.zaxxer:HikariCP:3.4.5")
     implementation("org.jdbi:jdbi3-core:3.8.2")
     implementation("org.jdbi:jdbi3-sqlobject:3.8.2")
+    implementation("org.jdbi:jdbi3-kotlin:3.8.2")
+    implementation("org.jdbi:jdbi3-kotlin-sqlobject:3.8.2")
     implementation("com.comphenix.protocol:ProtocolLib:4.5.0")
     compileOnly("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT")
     compileOnly("com.mojang:authlib:1.5.21")
