@@ -50,14 +50,11 @@ class UserManager : TerminableModule {
         subscribe(PlayerLoginEvent::class.java)
             .handler { loadUser(it.player) }
             .bindWith(consumer)
-        merge(
-            PlayerEvent::class.java,
-            PlayerQuitEvent::class.java,
-            PlayerKickEvent::class.java)
+        merge(PlayerEvent::class.java, PlayerQuitEvent::class.java, PlayerKickEvent::class.java)
             .handler {
                 val user = it.player.asUser()
                 instance.game.leave(user)
-                -user
+                user.unload()
             }
             .bindWith(consumer)
     }

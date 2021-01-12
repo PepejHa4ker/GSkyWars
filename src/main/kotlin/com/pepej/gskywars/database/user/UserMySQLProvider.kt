@@ -7,6 +7,7 @@ import com.pepej.gskywars.model.Kit
 import com.pepej.gskywars.model.Trail
 import com.pepej.gskywars.model.User
 import org.jdbi.v3.sqlobject.config.RegisterRowMapper
+import org.jdbi.v3.sqlobject.customizer.Bind
 import org.jdbi.v3.sqlobject.statement.SqlQuery
 import org.jdbi.v3.sqlobject.statement.SqlUpdate
 
@@ -42,8 +43,20 @@ interface UserMySQLProvider : UserDao  {
     @SqlUpdate("INSERT IGNORE INTO sw_users(id, username) VALUES (?, ?)")
     override fun createUser(id: String, username: String)
 
-    @SqlUpdate("UPDATE sw_users SET reputation = :user.reputation, last_vote_timestamp = :user.lastVoteTimeStamp, active_kit = :user.activeKit, active_trail = :user.activeTrail, games = :user.games, wins = :user.wins, kills = :user.kills, deaths = :user.deaths, arrows_fired = :user.arrowsFired, blocks_placed = :user.blocksPlaced, blocks_broken = :user.blocksBroken WHERE id = :user.id")
-    override fun updateUser(user: User)
+    @SqlUpdate("UPDATE sw_users SET reputation = :reputation, last_vote_timestamp = :lastVoteTimeStamp, active_kit = :activeKit, games = :games, wins = :wins, kills = :kills, deaths = :deaths, arrows_fired = :arrowsFired, blocks_placed = :blocksPlaced, blocks_broken = :blocksBroken WHERE id = :id")
+    override fun updateUser(
+        @Bind("id") id: String,
+        @Bind("activeKit") activeKit: Int,
+        @Bind("reputation") reputation: Int,
+        @Bind("lastVoteTimeStamp") lastVoteTimeStamp: Long,
+        @Bind("games") games: Int,
+        @Bind("wins") wins: Int,
+        @Bind("kills") kills: Int,
+        @Bind("deaths") deaths: Int,
+        @Bind("arrowsFired") arrowsFired: Int,
+        @Bind("blocksPlaced") blocksPlaced: Int,
+        @Bind("blocksBroken") blocksBroken: Int
+    )
 
     @SqlUpdate("DELETE FROM sw_users WHERE id = ?")
     override fun deleteUser(id: String)

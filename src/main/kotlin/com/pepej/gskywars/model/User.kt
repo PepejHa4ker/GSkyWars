@@ -11,13 +11,13 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 
+
+
 @Serializable
 data class User(
     @Serializable(with = UUIDSerializer::class)
     val id: UUID,
     val username: String,
-    var kits: MutableList<Kit?> = mutableListOf(),
-    var trails: MutableList<Trail?> = mutableListOf(),
     var reputation: Int = 0,
     @SerialName("last_vote_timestamp") var lastVoteTimeStamp: Long = 0,
     @SerialName("active_kit") var activeKit: Int = 0,
@@ -30,7 +30,10 @@ data class User(
     @SerialName("blocks_placed") var blocksPlaced: Int = 0,
     @SerialName("blocks_broken") var blocksBroken: Int = 0,
     @SerialName("local_kills") var localKills: Int = 0,
+    @Transient var kits: MutableList<Kit?> = mutableListOf(),
+    @Transient var trails: MutableList<Trail?> = mutableListOf(),
     @Transient var island: Island? = null,
+    @Transient var deathLocation: Position? = null,
     var spectator: Boolean = false,
 ) {
 
@@ -44,12 +47,14 @@ data class User(
         get() = ((lastVoteTimeStamp - System.currentTimeMillis()) / 1000) + instance.config.voteDelay.seconds
 
 
-    operator fun unaryMinus() {
-       save()
+
+    fun unload() {
+        save()
+        users.remove(this)
+
     }
 
     fun save() {
-        println(1)
         for (kit in kits) {
             instance.databaseAdapter.userAdapter.updateKit(id.toStr(), kit?.id ?: continue)
         }
@@ -58,8 +63,7 @@ data class User(
         }
 
         instance.databaseAdapter.userAdapter.updateUser(this)
-        Island.islands.mapNotNull { it.users }.filter { this in it }.forEach { it.remove(this) }
-        users.remove(this)
+        Island.islands.map { it.users }.filter { this in it }.forEach { it.remove(this) }
     }
 
     override fun equals(other: Any?): Boolean {

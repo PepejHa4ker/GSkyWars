@@ -1,10 +1,10 @@
 package com.pepej.gskywars.generic
 
 import com.pepej.gskywars.model.Head
-import com.pepej.gskywars.utils.SquarelandApi
 import com.pepej.papi.item.ItemStackBuilder
 import com.pepej.papi.menu.Item
 import com.pepej.papi.metadata.Metadata
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
@@ -22,10 +22,10 @@ object GenericItems {
         .build()
     val VOTE_MENU: Item = ItemStackBuilder.head(Head.findByName("Like").texture)
         .name("&bМеню репутаций")
-        .lore(  "  &eЧто это такое?")
+        .lore("  &eЧто это такое?")
         .lore("    &7- Это система репутаций с помощью которой", " &7Вы можете повышать/понижать чужую репутацию")
-        .lore(  "  &eКак это сделать?")
-        .lore(  "    &7- Наведите на голову игрока и нажмите нужную кнопку")
+        .lore("  &eКак это сделать?")
+        .lore("    &7- Наведите на голову игрока и нажмите нужную кнопку")
         .buildItem()
         .build()
 
@@ -42,8 +42,6 @@ object GenericItems {
             }
         }
 
-    fun profileMenu(player: String) =
-        ItemStackBuilder.of(SquarelandApi.getSkull(player)).nameClickable("&7Профиль").build()
-
+    val PROFILE_MENU = ItemStackBuilder.of(Material.NETHER_STAR).nameClickable("&7Профиль").build()
 
 }

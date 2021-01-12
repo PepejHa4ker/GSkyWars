@@ -7,10 +7,7 @@
     "password": "6IRo6oYO2AYO",
     "useSSL": false
   },
-  "votes": {
-    "time-per-vote": "1 hour"
-  },
-
+  "time-per-vote": "1 hour",
   "npc": {
     "name": "&aВыбор сервера &6| &dSkyWars",
     "position": {
@@ -24,59 +21,91 @@
       "signature": "DjA7pkwGYgojtrOAnoxXm016SPYyHPBDqNeUIk+6Qj5qF7h/OOZDnUZriifHl+hYzknSR6gJ2tj5IhUMnkleSBUqBbI6tbFnv07vkAEsw6PCeVVIP/YEmoIRroZmRKs12fL0fu8qybZcyBBlIOJoZLy/hRaj0fk+foFGX8CmTiy675PF9uowwu5AuwA1waL9t2mnDzy3tEwE5lmI2XVDIg9j5m8ipgoljjclbNFXv1aQIi8SE1UvAVEdXoylw+nOynbkvwU1y/kxvQOXAiKVxS4FbllOOD1gCzBiDuwm9V/We5gIHFY3c2mqClL05yA/+n8qSqiRtpVI2CCrofq5MT6+noWyO/guBzp5sjQLD5YBBK/JA9JA4KsoMPG7G16WVLU7dFff9lf4zsiGD++2l65UB4ob+tWUblJwmt8H0Q325GbVAsqUfJpvm3aqwhAdbLllBJuCaxFT/QRvJ22zPqmw00+R4iVK87C8HHhPn3yDmGq0GCI9lLYzXcTNcTnUteLYGxwYNPr97Ds45gz00huWkKSBvcKdJe0xmsEHcq/mq8fdBjlXuc1zyhn1oN2/lXKa2ZsfCfYwASqGlXCGDN0qoXLRwRgnYn4mQpDCC8rWVsnHO2HDJVD7vey9VVJdDVbTDj6mhsGwY/iJ3k/4pBaM0WUpARbM8QirwN+vsSM="
     }
   },
-  "map": "Онион",
-  "islands": [
-    {
-      "id": 1,
-      "spawns": [
-        {
-          "id": 1,
-          "position": {
-            "x": -311.5,
-            "y": 84,
-            "z": -76.5,
-            "world": "pepej"
-          }
-        }
-      ],
-      "chests": [
-        {
-          "id": 1,
-          "position": {
-            "x": -313,
-            "y": 84,
-            "z": -75,
-            "world": "pepej"
-          },
-          "rarity": "COMMON"
-        }
-      ]
+  "game": {
+    "waiting-position": {
+      "x": -352.5,
+      "y": 94,
+      "z":-24.5,
+      "world": "pepej"
     },
-    {
-      "id": 2,
-      "spawns": [
-        {
-          "id": 1,
-          "position": {
-            "x": -311.5,
-            "y": 85,
-            "z": -36.5,
-            "world": "pepej"
+    "timer": "30 sec",
+    "spectator-position": {
+      "x": -311.5,
+      "y": 100,
+      "z": -76.5,
+      "world": "pepej"
+    },
+
+    "map": "Онион",
+    "islands": [
+      {
+        "id": 1,
+        "spawns": [
+          {
+            "id": 1,
+            "position": {
+              "x": -311.5,
+              "y": 84,
+              "z": 3.5,
+              "world": "pepej"
+            }
           }
-        }
-      ],
-      "chests": [
-        {
-          "id": 1,
-          "position": {
-            "x": -307,
-            "y": 85,
-            "z": -32,
-            "world": "pepej"
+        ],
+        "chests": [
+          {
+            "id": 1,
+            "position": {
+              "x": -310,
+              "y": 84,
+              "z": 2,
+              "world": "pepej"
+            }, "rarity": "COMMON"
           },
-          "rarity": "MIDDLE"
-        }
-      ]
-    }
-  ]
+          {
+            "id": 2,
+            "position": {
+              "x": -310,
+              "y": 84,
+              "z": 4,
+              "world": "pepej"
+            }, "rarity": "COMMON"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "spawns": [
+          {
+            "id": 1,
+            "position": {
+              "x": -311.5,
+              "y": 84,
+              "z": -76.5,
+              "world": "pepej"
+            }
+          }
+        ],
+        "chests": [
+          {
+            "id": 1,
+            "position": {
+              "x": -314,
+              "y": 84,
+              "z": -76,
+              "world": "pepej"
+            }, "rarity": "COMMON"
+          },
+          {
+            "id": 1,
+            "position": {
+              "x": -314,
+              "y": 84,
+              "z": -78,
+              "world": "pepej"
+            }, "rarity": "COMMON"
+          }
+        ]
+      }
+    ]
+  }
 }

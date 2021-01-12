@@ -29,9 +29,14 @@ object SquarelandApi {
             var line: String?
             while (reader.readLine().also { line = it } != null) {
                 val parse = parser().parse(line).asJsonObject
-                val profile = GameProfile(parse["id"].asString.toId(), parse["name"].asString)
-                profile.properties.put("textures", Property("textures", parse["properties"].asJsonArray.get(0).asJsonObject["value"].asString,""))
-                return profile
+                return try {
+                    val profile = GameProfile(parse["id"].asString.toId(), parse["name"].asString)
+                    profile.properties.put("textures", Property("textures", parse["properties"].asJsonArray.get(0).asJsonObject["value"].asString,""))
+                    profile
+                } catch (e: Exception) {
+                    null
+                }
+
 
 
             }

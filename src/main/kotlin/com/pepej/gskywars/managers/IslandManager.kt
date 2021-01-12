@@ -2,16 +2,18 @@ package com.pepej.gskywars.managers
 
 import com.pepej.gskywars.GSkyWars.Companion.instance
 import com.pepej.gskywars.model.Island
+import com.pepej.gskywars.model.serialization.Serializer
 import com.pepej.papi.gson.GsonProvider
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 
 
 class IslandManager  {
     init {
-        instance.config.rootConfigNode.getNode("islands").childrenList
+        instance.config.rootConfigNode.getNode("game").getNode("islands").childrenList
             .map { it.string }
-            .forEach { Island.islands.add(Json.decodeFromString(GsonProvider.parser().parse(it).toString())) }
+            .forEach {
+                val island: Island /*эксплиситное выведение типа не хочу пихать в генерик*/= Serializer.deserialize(GsonProvider.parser().parse(it).toString())
+                Island.islands.add(island)
+            }
 
         }
     }

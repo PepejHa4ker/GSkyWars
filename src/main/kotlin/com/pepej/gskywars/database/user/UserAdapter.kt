@@ -4,6 +4,7 @@ import com.pepej.gskywars.database.DatabaseManager
 import com.pepej.gskywars.model.Kit
 import com.pepej.gskywars.model.Trail
 import com.pepej.gskywars.model.User
+import com.pepej.gskywars.utils.toStr
 
 class UserAdapter {
 
@@ -47,16 +48,11 @@ class UserAdapter {
     }
 
     fun updateUser(user: User) {
-        userDao.updateUser(user)
+        val (id, _, repo, vote, kit, _, games, wins, kills, deaths, arrows, placed, broken) = user
+        userDao.updateUser(id.toStr(), kit, repo, vote, games, wins, kills, deaths, arrows, placed, broken)
     }
 
     fun deleteUser(id: String) {
         userDao.deleteUser(id)
     }
-
-
-
-
-
-
 }

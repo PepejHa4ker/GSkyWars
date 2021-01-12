@@ -1,6 +1,7 @@
 package com.pepej.gskywars.utils
 
 import com.pepej.gskywars.GSkyWars.Companion.instance
+import com.pepej.gskywars.model.Position
 import com.pepej.gskywars.model.User
 import com.pepej.papi.item.ItemStackBuilder
 import com.pepej.papi.math.GenericMath
@@ -9,11 +10,16 @@ import com.pepej.papi.math.vector.Vector3f
 import com.pepej.papi.math.vector.Vector4d
 import com.pepej.papi.math.vector.Vector4f
 import com.pepej.papi.menu.Item
+import com.pepej.papi.text.Text
+import com.pepej.papi.text.Text.colorize
 import com.pepej.papi.utils.Players
 import com.pepej.papi.utils.UndashedUuids
+import net.md_5.bungee.api.ChatMessageType
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
@@ -72,6 +78,9 @@ fun Double.isOdd() = this % 2 == 0.0
 fun Float.isOdd() = this % 2 == 0.0f
 fun Item.toStack() = this.itemStack
 fun ItemStack.toItem() = ItemStackBuilder.of(this).buildItem().build()
+fun Entity.teleport(pos: Position) = this.teleport(pos.toLocation())
+fun Location.asPosition() = Position.of(this)
+fun Player.message(message: String) = this.sendMessage(colorize(message))
 
 
 

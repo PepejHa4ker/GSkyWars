@@ -12,7 +12,6 @@ data class Island(
     @Transient var slot: Int = 0,
     @Transient var tag: String = "A"
 ) {
-
     companion object {
         val islands: MutableList<Island> = mutableListOf()
 

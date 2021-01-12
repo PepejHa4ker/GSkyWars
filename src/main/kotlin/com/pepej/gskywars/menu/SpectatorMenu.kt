@@ -1,5 +1,6 @@
 package com.pepej.gskywars.menu
 
+import com.pepej.gskywars.GSkyWars.Companion.instance
 import com.pepej.gskywars.generic.GenericItems
 import com.pepej.gskywars.generic.GenericMetadata
 import com.pepej.gskywars.managers.UserManager
@@ -52,40 +53,46 @@ class SpectatorMenu(player: Player) : Gui(player, 3, "Меню наблюдат�
         val abilityPopulator = ABILITY_SCHEME.newPopulator(this)
         val currentSpeed = AtomicInteger(meta.getOrDefault(GenericMetadata.CURRENT_SPEED_KEY, 0))
 
-        val nightVision = ItemStackBuilder.head(Head.findByName(if (nightVisionEnabled) "Midnight blue" else "Night Globe").texture)
-            .nameClickable("${if (nightVisionEnabled) "&a" else "&c"}Ночное зрение")
-            .loreClickable("чтобы включить/выключить ночное зрение")
-            .lore(if (nightVisionEnabled) "&aВключено" else "&cВыключено")
-            .buildConsumer {
-                val player = it.whoClicked as Player
-                if (!nightVisionEnabled) {
-                    meta.put(GenericMetadata.NIGHT_VISION_KEY, true)
-                    player.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, 12000000, 0, false, false))
-                } else {
-                    player.removePotionEffect(PotionEffectType.NIGHT_VISION)
-                    nightVisionEnabled = false
-                    meta.put(GenericMetadata.NIGHT_VISION_KEY, false)
+        val nightVision =
+            ItemStackBuilder.head(Head.findByName(if (nightVisionEnabled) "Midnight blue" else "Night Globe").texture)
+                .nameClickable("${if (nightVisionEnabled) "&a" else "&c"}Ночное зрение")
+                .loreClickable("чтобы включить/выключить ночное зрение")
+                .lore(if (nightVisionEnabled) "&aВключено" else "&cВыключено")
+                .buildConsumer {
+                    val player = it.whoClicked as Player
+                    if (!nightVisionEnabled) {
+                        meta.put(GenericMetadata.NIGHT_VISION_KEY, true)
+                        player.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, 12000000, 0, false, false))
+                    } else {
+                        player.removePotionEffect(PotionEffectType.NIGHT_VISION)
+                        nightVisionEnabled = false
+                        meta.put(GenericMetadata.NIGHT_VISION_KEY, false)
+                    }
+                    redraw()
                 }
-                redraw()
-            }
 
-        val hideSpectators = ItemStackBuilder.head(Head.findByName(if (hideSpectatorEnabled) "Explosive Crate Active" else "Explosive Crate").texture)
-            .nameClickable("${if (hideSpectatorEnabled) "&a" else "&c"}Скрыть наблюдателей")
-            .loreClickable("чтобы показать/скрыть наблюдателей")
-            .lore(if (hideSpectatorEnabled) "&aПоказываются" else "&cСкрыты")
-            .buildConsumer {
-                val player = it.whoClicked as Player
-                if (!hideSpectatorEnabled) {
-                    meta.put(GenericMetadata.HIDE_SPECTATORS_KEY, true)
-                    player.msg("Вкл")
-                } else {
-                    player.msg("Выкл")
-                    hideSpectatorEnabled = false
-                    meta.put(GenericMetadata.HIDE_SPECTATORS_KEY, false)
+        val hideSpectators =
+            ItemStackBuilder.head(Head.findByName(if (hideSpectatorEnabled) "Explosive Crate Active" else "Explosive Crate").texture)
+                .nameClickable("${if (hideSpectatorEnabled) "&a" else "&c"}Скрыть наблюдателей")
+                .loreClickable("чтобы показать/скрыть наблюдателей")
+                .lore(if (hideSpectatorEnabled) "&aПоказываются" else "&cСкрыты")
+                .buildConsumer {
+                    val player = it.whoClicked as Player
+                    if (!hideSpectatorEnabled) {
+                        meta.put(GenericMetadata.HIDE_SPECTATORS_KEY, true)
+                        for (user in UserManager.users.filter { u -> u.spectator && u != player.asUser() }) {
+                            player.hidePlayer(instance, user.toPlayer)
+                        }
+                    } else {
+                        for (user in UserManager.users.filter { u -> u.spectator && u != player.asUser() }) {
+                            player.showPlayer(instance, user.toPlayer)
+                        }
+                        hideSpectatorEnabled = false
+                        meta.put(GenericMetadata.HIDE_SPECTATORS_KEY, false)
+                    }
+                    redraw()
+
                 }
-                redraw()
-
-            }
 
         abilityPopulator.apply {
             accept(nightVision)
@@ -96,8 +103,14 @@ class SpectatorMenu(player: Player) : Gui(player, 3, "Меню наблюдат�
                 ItemStackBuilder.of(SquarelandApi.getSkull(user.username))
                     .nameClickable("&7${user.username}")
                     .loreRightClickable("телепортироваться к игроку")
-                    .loreLeftClickable("&7Нажмите ЛКМ чтобы открыть меню репутаций")
-                    .lore("  &bЗдоровье: &a${(user.toPlayer.health / user.toPlayer.getAttribute(Attribute.GENERIC_MAX_HEALTH).value * 100).round(2)}%")
+                    .loreLeftClickable("открыть меню репутаций")
+                    .lore(
+                        "  &bЗдоровье: &a${
+                            (user.toPlayer.health / user.toPlayer.getAttribute(Attribute.GENERIC_MAX_HEALTH).value * 100).round(
+                                2
+                            )
+                        }%"
+                    )
                     .lore("  &bУровень еды: &a${user.toPlayer.foodLevel * 5}%")
                     .lore("  &bТекущий кит: &a${Kit.kits.find { it.id == user.activeKit }?.name ?: "Не выбрано"}")
 
@@ -210,7 +223,8 @@ class SpectatorMenu(player: Player) : Gui(player, 3, "Меню наблюдат�
         }
     }
 
-    private inner class VoteMenu(override val previous: Gui = SpectatorMenu(player)) : InnerGui(player, 3, "Голосование") {
+    private inner class VoteMenu(override val previous: Gui = SpectatorMenu(player)) :
+        InnerGui(player, 3, "Голосование") {
 
         private val scheme: MenuScheme = MenuScheme()
             .maskEmpty(1)
@@ -220,7 +234,9 @@ class SpectatorMenu(player: Player) : Gui(player, 3, "Меню наблюдат�
         override fun redraw() {
             super.redraw()
             val userPlayer = player.asUser()
-            fillNullableWith(ItemStackBuilder.of(Material.STAINED_GLASS_PANE).name("&c").durability(7).buildItem().build())
+            fillNullableWith(
+                ItemStackBuilder.of(Material.STAINED_GLASS_PANE).name("&c").durability(7).buildItem().build()
+            )
             setItem(4, GenericItems.VOTE_MENU)
             val playerHeadsPopulator = scheme.newPopulator(this)
             for (user in UserManager.users.filterNot { it.spectator }) {
@@ -234,26 +250,56 @@ class SpectatorMenu(player: Player) : Gui(player, 3, "Меню наблюдат�
                             if (userPlayer.canVote) {
                                 userPlayer.lastVoteTimeStamp = System.currentTimeMillis()
                                 user.reputation += 1
-                                player.msg(Players.MessageType.ANNOUNCEMENT, "Репутация игроку &6${user.username}&a успешно повышена, текущая: &6${user.reputation}")
-                                player.msg("В следующий раз Вы сможете проголоовать через&b${TimeUtils.formatTime(userPlayer.voteDelay.toInt())}")
-                                user.toPlayer.msg(Players.MessageType.ANNOUNCEMENT, "Игрок &6${player.name}&a повысил Вам репутацию")
+                                player.msg(
+                                    Players.MessageType.ANNOUNCEMENT,
+                                    "Репутация игроку &6${user.username}&a успешно повышена, текущая: &6${user.reputation}"
+                                )
+                                player.msg(
+                                    "В следующий раз Вы сможете проголоовать через&b${
+                                        TimeUtils.formatTime(
+                                            userPlayer.voteDelay.toInt()
+                                        )
+                                    }"
+                                )
+                                user.toPlayer.msg(
+                                    Players.MessageType.ANNOUNCEMENT,
+                                    "Игрок &6${player.name}&a повысил Вам репутацию"
+                                )
                                 redraw()
                             } else {
-                                player.msg(Players.MessageType.WARNING, "Вы не сможете голосовать еще${TimeUtils.formatTime(userPlayer.voteDelay.toInt())}")
+                                player.msg(
+                                    Players.MessageType.WARNING,
+                                    "Вы не сможете голосовать еще${TimeUtils.formatTime(userPlayer.voteDelay.toInt())}"
+                                )
                             }
-                        },
-                            {
-                                if (userPlayer.canVote) {
-                                    userPlayer.lastVoteTimeStamp = System.currentTimeMillis()
-                                    user.reputation -= 1
-                                    player.msg(Players.MessageType.ANNOUNCEMENT, "Репутация игроку &6${user.username}&a успешно понижена, текущая: &6${user.reputation}")
-                                    player.msg("В следующий раз Вы сможете проголоовать через&b${TimeUtils.formatTime(userPlayer.voteDelay.toInt())}")
-                                    user.toPlayer.msg(Players.MessageType.ANNOUNCEMENT, "Игрок &6${player.name}&a понизил Вам репутацию")
-                                    redraw()
-                                } else {
-                                    player.msg(Players.MessageType.WARNING, "Вы не сможете голосовать еще${TimeUtils.formatTime(userPlayer.voteDelay.toInt())}")
-                                }
-                            })
+                        }
+                        ) {
+                            if (userPlayer.canVote) {
+                                userPlayer.lastVoteTimeStamp = System.currentTimeMillis()
+                                user.reputation -= 1
+                                player.msg(
+                                    Players.MessageType.ANNOUNCEMENT,
+                                    "Репутация игроку &6${user.username}&a успешно понижена, текущая: &6${user.reputation}"
+                                )
+                                player.msg(
+                                    "В следующий раз Вы сможете проголоовать через&b${
+                                        TimeUtils.formatTime(
+                                            userPlayer.voteDelay.toInt()
+                                        )
+                                    }"
+                                )
+                                user.toPlayer.msg(
+                                    Players.MessageType.ANNOUNCEMENT,
+                                    "Игрок &6${player.name}&a понизил Вам репутацию"
+                                )
+                                redraw()
+                            } else {
+                                player.msg(
+                                    Players.MessageType.WARNING,
+                                    "Вы не сможете голосовать еще${TimeUtils.formatTime(userPlayer.voteDelay.toInt())}"
+                                )
+                            }
+                        }
                 )
             }
         }

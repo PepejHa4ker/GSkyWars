@@ -56,8 +56,6 @@ class ProfileMenu(player: Player) : Gui(player, 2, "Профиль ${player.name
                             return@buildConsumer
                         } else {
                             user.activeTrail = trail.id
-                            println(user.activeTrail)
-                            println(trail.id)
                             user.toPlayer.msg(Players.MessageType.ANNOUNCEMENT, "Вы успешно выбрали след ${trail.name}")
                             this.redraw()
 
@@ -66,8 +64,6 @@ class ProfileMenu(player: Player) : Gui(player, 2, "Профиль ${player.name
                         user.trails.add(trail)
                         user.toPlayer.msg(Players.MessageType.ANNOUNCEMENT, "Вы успешно приобрели след ${trail.name}")
                         user.activeTrail = trail.id
-                        println(user.activeTrail)
-                        println(trail.id)
                         this.redraw()
 
                     }

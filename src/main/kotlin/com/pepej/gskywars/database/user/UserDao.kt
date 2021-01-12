@@ -25,7 +25,19 @@ interface UserDao {
 
     fun createUser(id: String, username: String)
 
-    fun updateUser(user: User)
+    fun updateUser(
+        id: String,
+        activeKit: Int,
+        reputation: Int,
+        lastVoteTimeStamp: Long,
+        games: Int,
+        wins: Int,
+        kills: Int,
+        deaths: Int,
+        arrowsFired: Int,
+        blocksPlaced: Int,
+        blocksBroken: Int
+    )
 
     fun deleteUser(id: String)
 }

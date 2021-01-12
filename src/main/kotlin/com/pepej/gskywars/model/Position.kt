@@ -5,12 +5,19 @@ import kotlinx.serialization.Serializable
 import org.bukkit.Location
 
 @Serializable
-data class Position(
+data class Position (
     val x: Double,
     val y: Double,
     val z: Double,
     val world: String
 ) {
+
+    companion object {
+        fun of(location: Location): Position {
+            return Position(location.x, location.y, location.z, location.world.name)
+        }
+    }
+
     fun toLocation(): Location {
         return Location(Papi.worldNullable(world), x,y,z)
     }

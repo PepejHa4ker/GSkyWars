@@ -1,18 +1,18 @@
 package com.pepej.gskywars.model
 
+import com.pepej.papi.item.ItemStackBuilder
+import com.pepej.papi.terminable.TerminableConsumer
 import com.pepej.papi.terminable.module.TerminableModule
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.Serializable
+import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
-@Serializable
-abstract class Kit(
+sealed class Kit(
     val id: Int,
     val name: String,
     val price: Int,
     val default: Boolean = false,
-    @Contextual val menuItem: ItemStack
+    val menuItem: ItemStack
 ) : Comparable<Kit>, TerminableModule {
 
     companion object {
@@ -29,6 +29,49 @@ abstract class Kit(
 
     abstract fun equip(user: User)
 
+}
 
+class TrollKit : Kit(
+    2,
+    "Тролль",
+    250,
+    false,
+    ItemStackBuilder.of(Material.FIREWORK)
+        .name("&6Хлопушка тролля")
+        .lore("&7Карманная хлопушка тролля для издевательства над игроками")
+        .build()
 
+) {
+    override fun equip(user: User) {
+        //
+    }
+
+    override fun setup(consumer: TerminableConsumer) {
+    }
+
+    init {
+        kits.add(this)
+    }
+}
+
+class GiantKit : Kit(
+    1,
+    "Гигант",
+    100,
+    true,
+    ItemStackBuilder.of(Material.LEATHER_CHESTPLATE)
+        .name("&dКуртка циклопа")
+        .lore("&7Когда-то её носил сам циклоп, которого убил Одиссей")
+        .build()) {
+
+    override fun equip(user: User) {
+        //
+    }
+
+    override fun setup(consumer: TerminableConsumer) {
+    }
+
+    init {
+        kits.add(this)
+    }
 }

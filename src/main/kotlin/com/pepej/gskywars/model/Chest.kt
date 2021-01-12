@@ -7,7 +7,7 @@ data class Chest(
     val id: Int,
     val position: Position,
     val rarity: Rarity,
-    val opened: Boolean = false
+    var opened: Boolean = false
 ) {
 
 

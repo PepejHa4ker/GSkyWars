@@ -21,7 +21,7 @@ object Effects {
 
 
     private var GET_ID_METHOD: Method
-    private var GET_HANDLE_METHOD: Method
+    private var  GET_HANDLE_METHOD: Method
 
     init {
         val entityClass = ServerReflection.nmsClass("Entity")
@@ -111,7 +111,7 @@ object Effects {
 
                 spawnColoredRedstoneParticle(
                     newLoc,
-                    RandomSelector.weighted(COLORS) { if (it == Color.RED) 1.0 else 2.0 }.pick()
+                    RandomSelector.weighted(COLORS) { if (it == Color.RED) 1.0 else 5.0 }.pick()
                 )
 
             }
@@ -120,27 +120,23 @@ object Effects {
     }
 
 
+    fun shootEffectTask(
+        location: Location,
+        stepSize: Double,
+        steps: Double,
+        interval: Long,
+        particle: Particle
+    ): Task {
+        val vector = location.direction.toVector3d()
+        val step = 0.0
+        return Schedulers.sync().runRepeating({ task ->
+            if (step >= steps) {
+                task.stop()
+                return@runRepeating
+            }
+            step inc stepSize
+            Players.spawnParticle(location.clone().add(vector.mul(step).toBukkitVector()), particle)
 
-
-
-fun shootEffectTask(
-    location: Location,
-    stepSize: Double,
-    steps: Double,
-    interval: Long,
-    particle: Particle
-): Task {
-    val vector = location.direction.toVector3d()
-    val step = 0.0
-    return Schedulers.sync().runRepeating({ task ->
-        if (step >= steps) {
-            task.stop()
-            return@runRepeating
-        }
-        step inc stepSize
-        Players.spawnParticle(location.clone().add(vector.mul(step).toBukkitVector()), particle)
-
-    }, 0, interval)
-
-}
+        }, 0, interval)
+    }
 }
