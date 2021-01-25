@@ -1,10 +1,10 @@
 package com.pepej.gskywars.managers
 
 
-import com.google.gson.JsonParser
 import com.pepej.gskywars.GSkyWars.Companion.instance
 import com.pepej.gskywars.menu.IslandSelectorMenu
 import com.pepej.papi.Services
+import com.pepej.papi.google.gson.JsonParser
 import com.pepej.papi.npc.CitizensNpcFactory
 import com.pepej.papi.serialize.Position
 

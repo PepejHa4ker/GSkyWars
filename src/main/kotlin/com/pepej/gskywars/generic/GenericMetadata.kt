@@ -1,7 +1,7 @@
 package com.pepej.gskywars.generic
 
 import com.pepej.gskywars.model.User
-import com.pepej.papi.menu.Gui
+import com.pepej.papi.menu.Menu
 import com.pepej.papi.metadata.MetadataKey
 import com.pepej.papi.scoreboard.ScoreboardObjective
 
@@ -12,6 +12,6 @@ object GenericMetadata {
     val CURRENT_SPEED_KEY: MetadataKey<Int> = MetadataKey.createIntegerKey("current-speed")
     val NIGHT_VISION_KEY: MetadataKey<Boolean> = MetadataKey.createBooleanKey("night-vision")
     val HIDE_SPECTATORS_KEY: MetadataKey<Boolean> = MetadataKey.createBooleanKey("hide-spectators")
-    val PREVIOUS_MENU: MetadataKey<Gui> = MetadataKey.create("last-menu", Gui::class.java)
+    val PREVIOUS_MENU: MetadataKey<Menu> = MetadataKey.create("last-menu", Menu::class.java)
 
 }

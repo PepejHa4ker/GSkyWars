@@ -2,13 +2,13 @@ package com.pepej.gskywars.menu
 
 import com.pepej.gskywars.generic.GenericItems
 import com.pepej.gskywars.generic.GenericMetadata
-import com.pepej.papi.menu.Gui
+import com.pepej.papi.menu.Menu
 import com.pepej.papi.metadata.Metadata
 import org.bukkit.entity.Player
 
-abstract class InnerGui(player: Player, lines: Int, title: String) : Gui(player, lines, title) {
+abstract class InnerMenu(player: Player, lines: Int, title: String) : Menu(player, lines, title) {
 
-    abstract val previous: Gui
+    abstract val previous: Menu
 
     override fun open() {
         val meta = Metadata.provideForPlayer(player)

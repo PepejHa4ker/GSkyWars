@@ -8,7 +8,7 @@ import com.pepej.gskywars.model.Head
 import com.pepej.gskywars.model.Kit
 import com.pepej.gskywars.utils.*
 import com.pepej.papi.item.ItemStackBuilder
-import com.pepej.papi.menu.Gui
+import com.pepej.papi.menu.Menu
 import com.pepej.papi.menu.scheme.MenuScheme
 import com.pepej.papi.menu.scheme.StandardSchemeMappings
 import com.pepej.papi.metadata.Metadata
@@ -20,7 +20,7 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import java.util.concurrent.atomic.AtomicInteger
 
-class SpectatorMenu(player: Player) : Gui(player, 3, "Меню наблюдателя") {
+class SpectatorMenu(player: Player) : Menu(player, 3, "Меню наблюдателя") {
     companion object {
 
         private val SPEED_SETTINGS_SCHEME: MenuScheme = MenuScheme()
@@ -223,8 +223,8 @@ class SpectatorMenu(player: Player) : Gui(player, 3, "Меню наблюдат�
         }
     }
 
-    private inner class VoteMenu(override val previous: Gui = SpectatorMenu(player)) :
-        InnerGui(player, 3, "Голосование") {
+    private inner class VoteMenu(override val previous: Menu = SpectatorMenu(player)) :
+        InnerMenu(player, 3, "Голосование") {
 
         private val scheme: MenuScheme = MenuScheme()
             .maskEmpty(1)

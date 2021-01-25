@@ -6,16 +6,11 @@ import com.pepej.papi.random.VariableAmount
 import com.pepej.papi.text.Text.colorize
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
-import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.PotionMeta
-import org.bukkit.potion.Potion
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
-import org.bukkit.potion.PotionType
-import java.util.*
 import java.util.function.Supplier
-import kotlin.collections.ArrayList
 import kotlin.random.Random
 
 class StandardLootGenerator : LootGenerator {
@@ -71,6 +66,8 @@ class StandardLootGenerator : LootGenerator {
         )
         private val SWORDS = listOf(
             ItemStack(Material.STONE_SWORD),
+            ItemStack(Material.STONE_SWORD),
+            ItemStack(Material.IRON_SWORD),
             ItemStack(Material.IRON_SWORD),
             ItemStack(Material.GOLD_SWORD),
             ItemStack(Material.DIAMOND_SWORD)
@@ -82,22 +79,22 @@ class StandardLootGenerator : LootGenerator {
             ItemStack(Material.DIAMOND_SPADE)
         )
         private val BLOCKS = listOf(
-            ItemStack(Material.STONE, VariableAmount.range(20.0, 40.0).flooredAmount),
-            ItemStack(Material.WOOD, VariableAmount.range(20.0, 40.0).flooredAmount),
-            ItemStack(Material.BRICK, VariableAmount.range(20.0, 40.0).flooredAmount),
-            ItemStack(Material.COBBLESTONE, VariableAmount.range(20.0, 40.0).flooredAmount),
-            ItemStack(Material.STONE, VariableAmount.range(20.0, 40.0).flooredAmount),
-            ItemStack(Material.DIRT, VariableAmount.range(20.0, 40.0).flooredAmount)
-        )
+            ItemStack(Material.STONE),
+            ItemStack(Material.WOOD),
+            ItemStack(Material.BRICK),
+            ItemStack(Material.COBBLESTONE),
+            ItemStack(Material.STONE),
+            ItemStack(Material.DIRT),
+        ).onEach { it.amount = VariableAmount.range(20.0, 40.0).flooredAmount }
         private val FOOD = listOf(
-            ItemStack(Material.CARROT_ITEM, VariableAmount.range(8.0, 32.0).flooredAmount),
-            ItemStack(Material.APPLE, VariableAmount.range(8.0, 32.0).flooredAmount),
-            ItemStack(Material.BREAD, VariableAmount.range(8.0, 32.0).flooredAmount),
-            ItemStack(Material.BAKED_POTATO, VariableAmount.range(8.0, 32.0).flooredAmount),
-            ItemStack(Material.COOKED_FISH, VariableAmount.range(8.0, 32.0).flooredAmount),
-            ItemStack(Material.COOKED_BEEF, VariableAmount.range(8.0, 32.0).flooredAmount),
-            ItemStack(Material.COOKED_CHICKEN, VariableAmount.range(8.0, 32.0).flooredAmount)
-        )
+            ItemStack(Material.CARROT_ITEM),
+            ItemStack(Material.APPLE),
+            ItemStack(Material.BREAD),
+            ItemStack(Material.BAKED_POTATO),
+            ItemStack(Material.COOKED_FISH),
+            ItemStack(Material.COOKED_BEEF),
+            ItemStack(Material.COOKED_CHICKEN),
+        ).onEach { it.amount = VariableAmount.range(8.0, 32.0).flooredAmount }
 
         private val POTIONS = listOf(Supplier {
             val low: Boolean = Random.nextBoolean()
@@ -114,7 +111,7 @@ class StandardLootGenerator : LootGenerator {
             val low: Boolean = Random.nextBoolean()
             val p = ItemStack(Material.SPLASH_POTION)
             val pMeta = p.itemMeta as PotionMeta
-            pMeta.displayName = colorize("&сЗелье Регенерации")
+            pMeta.displayName = colorize("&cЗелье Регенерации")
             pMeta.addCustomEffect(
                 PotionEffect(
                     PotionEffectType.REGENERATION,

@@ -26,7 +26,7 @@ data class User(
     var wins: Int = 0,
     var kills: Int = 0,
     var deaths: Int = 0,
-    @SerialName("arrow_fired") var arrowsFired: Int = 0,
+    @SerialName("arrows_fired") var arrowsFired: Int = 0,
     @SerialName("blocks_placed") var blocksPlaced: Int = 0,
     @SerialName("blocks_broken") var blocksBroken: Int = 0,
     @SerialName("local_kills") var localKills: Int = 0,

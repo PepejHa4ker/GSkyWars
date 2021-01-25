@@ -26,6 +26,10 @@ class UserAdapter {
         return userDao.getUser(id)
     }
 
+    fun getUserByName(name: String): User? {
+        return userDao.getUserByName(name)
+    }
+
     fun getKits(id: String): MutableList<Kit?> {
         return userDao.getKits(id)
     }

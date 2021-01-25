@@ -3,10 +3,8 @@ package com.pepej.gskywars.config
 import com.pepej.gskywars.model.Position
 import com.pepej.gskywars.model.serialization.Serializer
 import com.pepej.papi.config.ConfigFactory
+import com.pepej.papi.config.configurate.ConfigurationNode
 import com.pepej.papi.time.DurationParser
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import ninja.leaping.configurate.ConfigurationNode
 import java.io.File
 import java.time.Duration
 

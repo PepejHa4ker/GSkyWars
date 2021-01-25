@@ -18,6 +18,7 @@ import com.pepej.papi.Services
 import com.pepej.papi.bossbar.BossBar
 import com.pepej.papi.bossbar.BossBarColor
 import com.pepej.papi.bossbar.BossBarFactory
+import com.pepej.papi.config.configurate.ConfigurationNode
 import com.pepej.papi.events.Events
 import com.pepej.papi.events.Events.subscribe
 import com.pepej.papi.hologram.HologramLine
@@ -36,8 +37,8 @@ import com.pepej.papi.terminable.TerminableConsumer
 import com.pepej.papi.terminable.module.TerminableModule
 import com.pepej.papi.text.Text.colorize
 import com.pepej.papi.utils.Players
+import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.TextComponent
-import ninja.leaping.configurate.ConfigurationNode
 import org.bukkit.ChatColor
 import org.bukkit.GameMode
 import org.bukkit.Material
@@ -67,6 +68,7 @@ class Game(
     private val scoreboard: Scoreboard = Services.load(ScoreboardProvider::class.java).scoreboard,
     private val config: ConfigurationNode = instance.config.rootConfigNode.getNode("game"),
     private var timer: AtomicInteger = AtomicInteger(instance.config.timer.seconds.toInt()),
+    private val refillTimer: AtomicInteger = AtomicInteger(timer.get() / 2),
     private val lootGenerator: LootGenerator = StandardLootGenerator(),
     private val bossbar: BossBar = Services.load(BossBarFactory::class.java).newBossBar(),
     var alivePlayers: Int = 0,
@@ -94,17 +96,17 @@ class Game(
 
 
     override fun setup(consumer: TerminableConsumer) {
+        val individualHologramFactory: IndividualHologramFactory = Services.load(IndividualHologramFactory::class.java)
 
         bossbar
             .color(BossBarColor.RED)
             .progress(1.0)
             .bindWith(consumer)
 
-        subscribe(EntityDamageByEntityEvent::class.java, EventPriority.MONITOR)
-            .filter { it.damager is Player && it.entity is Player }
+        subscribe(EntityDamageByEntityEvent::class.java)
             .handler {
-                val attacker = (it.damager as Player).asUser()
-                val victim = (it.entity as Player).asUser()
+                val attacker = (it.damager as? Player ?: return@handler).asUser()
+                val victim = (it.entity as? Player ?: return@handler).asUser()
                 if (attacker.spectator || victim.spectator) {
                     it.isCancelled = true
                     return@handler
@@ -117,6 +119,8 @@ class Game(
 
                 if (attacker.island != null && victim.island != null) {
                     if (attacker.island?.users?.contains(victim) == true) {
+                        println("stat66e")
+
                         it.isCancelled = true
                         return@handler
                     }
@@ -128,30 +132,6 @@ class Game(
                     attackerMeta.put(LAST_ATTACKER_KEY, ExpiringValue.of(victim, 1, TimeUnit.MINUTES))
                 }
 
-            }
-            .bindWith(consumer)
-        subscribe(EntityDamageEvent::class.java)
-            .handler {
-                if (state == GameState.WAIT || state == GameState.START) {
-                    it.isCancelled = true
-                    return@handler
-                }
-            }
-            .bindWith(consumer)
-        subscribe(ProjectileLaunchEvent::class.java)
-            .handler {
-                val user = (it.entity.shooter as Player).asUser()
-                if (user.activeTrail != 0) {
-                    val activeTrail = Trail.all().find { t -> t.id == user.activeTrail } ?: return@handler
-                    Schedulers.sync().runRepeating({ task ->
-                        if (it.entity.isDead || it.entity.isOnGround || !it.entity.isValid) {
-                            task.close()
-                            return@runRepeating
-                        }
-                        Players.spawnParticle(it.entity.location, activeTrail.particle)
-                    }, 0, 3)
-
-                }
             }
             .bindWith(consumer)
         subscribe(PlayerJoinEvent::class.java)
@@ -174,36 +154,50 @@ class Game(
 
         subscribe(BlockPlaceEvent::class.java)
             .handler {
-                it.player.asUser().blocksPlaced += 1
+                val user = it.player.asUser()
+                if (user.spectator) {
+                    it.isCancelled = true
+                    return@handler
+                }
+                user.blocksPlaced += 1
             }
             .bindWith(consumer)
 
         subscribe(BlockBreakEvent::class.java)
             .handler {
-                it.player.asUser().blocksBroken += 1
+                val user = it.player.asUser()
+                if (user.spectator) {
+                    it.isCancelled = true
+                    return@handler
+                }
+                user.blocksBroken += 1
             }
             .bindWith(consumer)
 
         subscribe(PlayerInteractEvent::class.java)
-            .filter { it.clickedBlock != null && !it.clickedBlock.isEmpty && it.clickedBlock.type == Material.CHEST }
             .handler { e ->
-                val user = e.player.asUser()
-                if (user.island != null) {
-                    for (chest in user.island?.chests ?: return@handler) {
-                        if (chest.position == Position.of(e.clickedBlock.location)) {
-                            chest.opened = true
+                if ( e.clickedBlock != null && !e.clickedBlock.isEmpty && e.clickedBlock.type == Material.CHEST) {
+                    val user = e.player.asUser()
+                    if (user.island != null) {
+                        user.island?.chests?.first { it.position == Position.of(e.clickedBlock.location) }?.apply {
+                            updateHologram = individualHologramFactory.newHologram(
+                                Position.of(position.toLocation().add(0.5, 0.5, 0.5)),
+                                listOf(HologramLine { "&dДо обновления &a${refillTimer.get()}" })
+                            )
+                            updateHologram!!.addViewer(e.player)
+                            updateHologram!!.addExpiring((timer.get() * 20).toLong())
+                            updateHologram!!.spawn()
+
                         }
                     }
                 }
-            }
 
-            .bindWith(consumer)
+
+            }.bindWith(consumer)
 
         subscribe(EntityShootBowEvent::class.java)
             .filter { it.entity is Player }
-            .handler {
-                (it.entity as Player).asUser().arrowsFired += 1
-            }
+            .handler { (it.entity as Player).asUser().arrowsFired += 1 }
             .bindWith(consumer)
 
         subscribe(PlayerDeathEvent::class.java)
@@ -218,7 +212,9 @@ class Game(
                 if (lastAttacker != null) {
                     lastAttacker.kills += 1
                     lastAttacker.localKills += 1
-                    lastAttacker.toPlayer.message("             &dВы убили &c${it.entity.name}")
+                    lastAttacker.toPlayer.apply {
+                        message("&dВы убили &c${it.entity.name}")
+                    }
                     val message = MESSAGES.random()
                     val hologram = hologramFactory.newHologram(
                         com.pepej.papi.serialize.Position.of(it.entity.location.add(0.0, 1.5, 0.0)),
@@ -230,10 +226,14 @@ class Game(
                         addViewer(lastAttacker.toPlayer)
                     }
                     hologram.spawn()
+
                 } else {
                     Players.all()
-                        .forEach { p -> p.message("             &d${it.entity.name}&c самоубился..") }
+                        .forEach { p ->
+                            p.message("&d${it.entity.name}&c самоубился..")
+                        }
                 }
+
             }
 
         subscribe(PlayerRespawnEvent::class.java)
@@ -248,15 +248,22 @@ class Game(
     }
 
     private fun setSpectator(user: User) {
+        if (user.spectator) {
+            return
+        }
         user.spectator = true
+        leave(user)
         user.toPlayer.apply {
             allowFlight = true
             isFlying = true
             inventory.apply {
+                clear()
                 setItem(0, GenericItems.SPECTATOR_ITEM)
                 setItem(4, GenericItems.PROFILE_MENU)
             }
             msg("Теперь Вы наблюдатель")
+            canPickupItems = false
+            noDamageTicks = 20 * (timer.get() + 20)
             UserManager.users.filterNot { u -> u.spectator }
                 .map { u -> u.toPlayer }
                 .forEach { p -> p.hidePlayer(instance, player) }
@@ -295,12 +302,19 @@ class Game(
                 "$color  squareland.ru",
             )
 
-            else -> obj.applyLines(listOf(
+            else -> obj.applyLines(
                 listOf(
-                    "&1",
-                    "  &7 Игра окончена",
-                    "&2"
-                ), getTopMessage(2, true)).flatten())
+                    listOf(
+                        "&1",
+                        "  &7 Игра окончена",
+                        "&2"
+                    ), getTopMessage(2, true),
+                    listOf(
+                        "&3",
+                        "$color  squareland.ru"
+                    )
+                ).flatten()
+            )
 
         }
     }
@@ -315,11 +329,11 @@ class Game(
                     bossbar
                         .title("&dИгра окончена, победитель &7- &5${getTop(1).firstOrNull()?.username ?: "---"}")
                         .progress(1.0)
-                    .color(BOSSBAR_COLORS.random())
+                        .color(BOSSBAR_COLORS.random())
                 }
                 GameState.PLAY -> {
                     bossbar
-                        .title("$color В живых еще &a$aliveIslands$color островов")
+                        .title("$color В живых еще &a${aliveIslands.size}$color островов")
                         .progress((timer.get().toDouble()) / instance.config.timer.seconds.toDouble())
                         .color(getTimerBossBarColor(timer.get()))
                 }
@@ -327,17 +341,18 @@ class Game(
                     bossbar.title("$color Ожидание игроков")
                         .progress(1.0)
                 }
-                else -> {}
-            }
-                for (player in Players.all()) {
-                    val obj = provideForPlayer(player).getOrNull(SCOREBOARD_KEY)
-
-                    if (obj != null) {
-                        updater.accept(player, obj)
-
-                    }
+                else -> {
                 }
-            }, 5, 15)
+            }
+            for (player in Players.all()) {
+                val obj = provideForPlayer(player).getOrNull(SCOREBOARD_KEY)
+
+                if (obj != null) {
+                    updater.accept(player, obj)
+
+                }
+            }
+        }, 0, 10)
 
 
     }
@@ -354,6 +369,16 @@ class Game(
 
             GameState.PLAY -> {
                 timer.getAndDecrement()
+                refillTimer.getAndDecrement()
+//                aliveIslands.forEach { island ->
+//                    island.chests.mapNotNull { it.updateHologram }
+//                        .forEach {
+//                            it.updateLines(
+//                                listOf(
+//                                    HologramLine { "&dДо обновления &a${refillTimer.get()}" })
+//                            )
+//                        }
+//                }
                 if (timer.get() <= 0 || UserManager.users.filterNot { it.spectator }.count() <= 1) {
                     end()
 
@@ -367,6 +392,9 @@ class Game(
 
 
     fun join(user: User, island: Island) {
+        if (user in island.users || island.users.size == island.spawns.size) {
+            return
+        }
         val uje = GSkyWarsUserJoinEvent(this, user)
         Events.call(uje)
         if (uje.isCancelled) {
@@ -415,7 +443,7 @@ class Game(
             user.island = null
             if (state == GameState.PLAY) {
                 alivePlayers = UserManager.users.filter { it.island != null }.count()
-                if (aliveIslands <= 1) {
+                if (aliveIslands.size <= 1) {
                     end()
                 }
             }
@@ -448,12 +476,13 @@ class Game(
                     return@runRepeating
                 }
                 bossbar
-                    .progress(t.get().toDouble()/15.0)
+                    .progress(t.get().toDouble() / 15.0)
                     .title("&7Начало через ${getStartTimerColor(t.get()) + t.get()}")
                     .color(getStartTimerBossBarColor(t.get()))
 
                 for (player in Players.all()) {
-                    player.exp = (t.get()/15.0).toFloat()
+                    player.level = t.get()
+                    player.exp = t.get() / 15.0f
                     player.sendTitle(
                         "",
                         colorize("&7Начало через ${getStartTimerColor(t.get()) + t.get()}"),
@@ -473,6 +502,7 @@ class Game(
 
     private fun end() {
         state = GameState.END
+        aliveIslands.forEach { processWin(it) }
         Schedulers.async().runLater({
             val bungee = Services.load(BungeeCord::class.java)
             Events.call(GSkyWarsGameEndEvent(this))
@@ -484,6 +514,7 @@ class Game(
                 }
 
                 timer.set(instance.config.timer.seconds.toInt())
+                refillTimer.set(timer.get() / 2)
                 state = GameState.WAIT
 
             }, 20)
@@ -502,11 +533,10 @@ class Game(
 
             }
 
-            var spawnIndex = 0
-            island.users.forEach {
-                it.games += 1
-                it.spectator = false
-                it.toPlayer.apply {
+            island.users.forEachIndexed { index, user ->
+                user.games += 1
+                user.spectator = false
+                user.toPlayer.apply {
                     inventory.clear()
                     closeInventory()
                     itemOnCursor = null
@@ -515,7 +545,10 @@ class Game(
                     isCollidable = false
                     fallDistance = 0.0f
                     exp = 0.0f
-                    teleport(island.spawns[spawnIndex].position)
+                    Players.resetWalkSpeed(this)
+                    Players.resetFlySpeed(this)
+                    level = 0
+                    teleport(island.spawns[index].position)
                     saturation = 10.0f
                     noDamageTicks = 200
                     foodLevel = 20
@@ -524,12 +557,11 @@ class Game(
                     fireTicks = 0
                     gameMode = GameMode.SURVIVAL
                 }
-                if (it.activeKit != 0) {
-                    Kit.kits.find { kit -> kit.id == it.activeKit }?.equip(it)
+                if (user.activeKit != 0) {
+                    Kit.kits.find { kit -> kit.id == user.activeKit }?.equip(user)
                 }
 
                 alive += 1
-                spawnIndex += 1
 
             }
             fillChests(island)
@@ -544,9 +576,7 @@ class Game(
         if (island.spawns.size == 1) {
             items.addAll(lootGenerator.basic())
         } else {
-
             for (i in 0..Island.islands.first().spawns.size) {
-                items.random()
                 items.addAll(thinLoot(lootGenerator.basic(), 0.9))
             }
         }
@@ -597,7 +627,7 @@ class Game(
                 add("&5&m----------------------------")
             }
             getTop(size).forEachIndexed { i, u ->
-                add("${if (scoreboard) "" else "      " }&4#${(i + 1)} &d${u?.username ?: "####"} &7- &c${u?.localKills ?: "-"}")
+                add("${if (scoreboard) "" else "      "}&4#${(i + 1)} &d${u?.username ?: "####"} &7- &c${u?.localKills ?: "-"}")
             }
             if (!scoreboard) {
                 add("&5&m----------------------------")
@@ -633,12 +663,16 @@ class Game(
     }
 
 
-    private val aliveIslands: Int
-        get() = Island.islands.filter { it.users.isNotEmpty() }.count()
+    private val aliveIslands: List<Island>
+        get() = Island.islands.filter { it.users.isNotEmpty() }
 
     fun joinRandomIsland(user: User) {
+        val freeIslands = Island.islands.filterNot { it.users.size >= it.spawns.size }
+        if (freeIslands.isEmpty()) {
+            return
+        }
         val randomIsland =
-            RandomSelector.uniform(Island.islands.filterNot { it.users.size >= it.spawns.size }).pick()
+            RandomSelector.uniform(freeIslands).pick()
         if (user.island != null) {
             if (user.island == randomIsland) {
                 joinRandomIsland(user) //рекурсивный вызов функции чтобы зайти еще раз
@@ -647,6 +681,16 @@ class Game(
         }
         join(user, randomIsland)
 
+    }
+
+    private fun processWin(island: Island) {
+        for (user in island.users) {
+            user.wins += 1
+            user.toPlayer.apply {
+                message("&cВы победили!")
+//                displayTextToActionBar(this, "&eПоздравляем с победой!", 3)
+            }
+        }
     }
 
     private fun getTimerColor(timer: Int): String = when (timer) {
@@ -669,7 +713,7 @@ class Game(
 
     private fun getStartTimerBossBarColor(timer: Int): BossBarColor = when (timer) {
         in 11..15 -> BossBarColor.GREEN
-        in 6..10 -> BossBarColor.PURPLE
+        in 6..10 -> BossBarColor.PINK
         else -> BossBarColor.RED
 
     }
@@ -678,6 +722,18 @@ class Game(
         for (user in UserManager.users.filter { it.island == null }) {
             joinRandomIsland(user)
         }
+    }
+
+    private fun displayTextToActionBar(player: Player, message: String, seconds: Int) {
+        val t = AtomicInteger(seconds * 4)
+        Schedulers.async().runRepeating({ task ->
+            t.getAndDecrement()
+            if (t.get() <= 0) {
+                task.close()
+                return@runRepeating
+            }
+            player.actionBar(message)
+        }, 0, 5)
     }
 
     private fun convertSecondsToMMSS(time: Int): String {

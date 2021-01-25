@@ -95,10 +95,8 @@ object Effects {
         val radDiff = (startRadius - endRadius) / (at distance to)
         var rad = startRadius
         ray@ while (rad >= endRadius) {
-            println(radDiff)
             rad -= radDiff
             depth += 1.0
-
             var ang = 0.0
             circle@ while (ang <= 2 * PI) {
                 ang += (2 * PI / circleParts)

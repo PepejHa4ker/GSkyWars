@@ -1,7 +1,7 @@
 package com.pepej.gskywars.model
 
-import com.google.gson.JsonElement
 import com.pepej.papi.config.ConfigFactory
+import com.pepej.papi.google.gson.JsonElement
 import com.pepej.papi.gson.GsonSerializable
 import com.pepej.papi.gson.JsonBuilder
 import com.pepej.papi.item.ItemStackBuilder

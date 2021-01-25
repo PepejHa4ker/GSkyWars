@@ -40,6 +40,10 @@ interface UserMySQLProvider : UserDao  {
     @RegisterRowMapper(UserRowMapper::class)
     override fun getUser( id: String): User?
 
+    @SqlQuery("SELECT * FROM sw_users WHERE username = ?")
+    @RegisterRowMapper(UserRowMapper::class)
+    override fun getUserByName( name: String): User?
+
     @SqlUpdate("INSERT IGNORE INTO sw_users(id, username) VALUES (?, ?)")
     override fun createUser(id: String, username: String)
 

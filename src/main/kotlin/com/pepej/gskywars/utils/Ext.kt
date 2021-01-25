@@ -3,6 +3,8 @@ package com.pepej.gskywars.utils
 import com.pepej.gskywars.GSkyWars.Companion.instance
 import com.pepej.gskywars.model.Position
 import com.pepej.gskywars.model.User
+import com.pepej.papi.hologram.HologramLine
+import com.pepej.papi.hologram.individual.IndividualHologramFactory
 import com.pepej.papi.item.ItemStackBuilder
 import com.pepej.papi.math.GenericMath
 import com.pepej.papi.math.vector.Vector3d
@@ -81,6 +83,8 @@ fun ItemStack.toItem() = ItemStackBuilder.of(this).buildItem().build()
 fun Entity.teleport(pos: Position) = this.teleport(pos.toLocation())
 fun Location.asPosition() = Position.of(this)
 fun Player.message(message: String) = this.sendMessage(colorize(message))
+fun Player.actionBar(message: String) = this.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent(colorize(message)))
+fun IndividualHologramFactory.newHologram(position: Position, lines: List<HologramLine>) = this.newHologram(com.pepej.papi.serialize.Position.of(position.toLocation()), lines)
 
 
 

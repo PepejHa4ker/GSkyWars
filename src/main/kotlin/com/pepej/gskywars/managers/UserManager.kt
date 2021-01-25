@@ -23,10 +23,14 @@ class UserManager : TerminableModule {
         val users: MutableSet<User> = hashSetOf()
     }
 
-    private val userAdapter: UserAdapter = instance.databaseAdapter.userAdapter
+    val userAdapter: UserAdapter = instance.databaseAdapter.userAdapter
 
     operator fun get(player: Player): User {
         return users.find { it.id == player.uniqueId } ?: loadUser(player)
+    }
+
+    operator fun get(player: String): User? {
+        return users.find { it.username.equals(player, true) } ?: userAdapter.getUserByName(player)
     }
 
     private fun loadStats() {

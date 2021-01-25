@@ -5,20 +5,31 @@ import com.pepej.gskywars.model.Trail
 import com.pepej.gskywars.utils.SquarelandApi
 import com.pepej.gskywars.utils.asUser
 import com.pepej.gskywars.utils.msg
+import com.pepej.gskywars.utils.round
 import com.pepej.papi.item.ItemStackBuilder
-import com.pepej.papi.menu.Gui
+import com.pepej.papi.menu.Menu
 import com.pepej.papi.menu.scheme.MenuScheme
 import com.pepej.papi.menu.scheme.StandardSchemeMappings
 import com.pepej.papi.utils.Players
 import org.bukkit.Material
 import org.bukkit.entity.Player
 
-class ProfileMenu(player: Player) : Gui(player, 2, "Профиль ${player.name}") {
+class ProfileMenu(player: Player) : Menu(player, 2, "Профиль ${player.name}") {
     override fun redraw() {
+        val user = player.asUser()
+        val (_, _, rep, _, _, _, games, wins, kills, deaths, arrows, placed, broken) = user
         addItem(
             ItemStackBuilder.of(SquarelandApi.getSkull(player.name))
                 .name("&bВаша статистика ->")
-                .lore("    &aУбийств: ${player.asUser().kills}")
+                .lore("    &7Репутация &d$rep")
+                .lore("    &7Убийств &d$kills")
+                .lore("    &7Смертей &d$deaths")
+                .lore("    &7Игр сыграно &d$games")
+                .lore("    &7Побед &d$wins")
+                .lore("    &7Процент побед &d${(games/wins).toDouble().round(2)}%")
+                .lore("    &7Выстрелов с лука &d$arrows")
+                .lore("    &7Блоков поставлено &d$placed")
+                .lore("    &7Блоков разрушено &d$broken")
                 .buildItem()
                 .build()
         )
@@ -31,9 +42,10 @@ class ProfileMenu(player: Player) : Gui(player, 2, "Профиль ${player.name
     }
 
 
-    private inner class TrailMenu(override val previous: Gui = ProfileMenu(player)) : InnerGui(player, 2, "Выбор следа") {
+    private inner class TrailMenu(override val previous: Menu = ProfileMenu(player)) : InnerMenu(player, 2, "Выбор следа") {
 
-        private val TRAIL_SCHEME = MenuScheme()
+
+        private val TRAIL_SCHEME: MenuScheme = MenuScheme()
             .mask("011111111")
             .mask("111111111")
 

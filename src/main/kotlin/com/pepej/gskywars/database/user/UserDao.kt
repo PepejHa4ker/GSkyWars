@@ -15,6 +15,8 @@ interface UserDao {
 
     fun getUser(id: String): User?
 
+    fun getUserByName(name: String): User?
+
     fun getKits(id: String): MutableList<Kit?>
 
     fun getTrails(id: String): MutableList<Trail?>

@@ -5,6 +5,7 @@ import com.pepej.gskywars.config.Config
 import com.pepej.gskywars.database.DatabaseAdapter
 import com.pepej.gskywars.events.GSkyWarsEventListener
 import com.pepej.gskywars.game.Game
+import com.pepej.gskywars.http.GSkyWarsHTTPClient
 import com.pepej.gskywars.managers.IslandManager
 import com.pepej.gskywars.managers.NpcManager
 import com.pepej.gskywars.managers.UserManager
@@ -14,6 +15,7 @@ import com.pepej.papi.ap.PluginDependency
 import com.pepej.papi.maven.MavenLibraries
 import com.pepej.papi.maven.MavenLibrary
 import com.pepej.papi.plugin.PapiJavaPlugin
+import io.ktor.server.engine.*
 import java.io.File
 
 
@@ -27,6 +29,7 @@ import java.io.File
     MavenLibrary("com.zaxxer:HikariCP:3.4.5"),
 )
 class GSkyWars : PapiJavaPlugin() {
+    private lateinit var httpClient: ApplicationEngine
     lateinit var userManager: UserManager
         private set
     lateinit var databaseAdapter: DatabaseAdapter
@@ -57,12 +60,15 @@ class GSkyWars : PapiJavaPlugin() {
         bindModule(game)
         bindModule(GiantKit())
         bindModule(TrollKit())
+        httpClient = GSkyWarsHTTPClient().launch(7070)
+
 
 
     }
 
     override fun onPluginDisable() {
         UserManager.users.forEach(User::save)
+        httpClient.stop(0, 1000)
     }
 
     companion object {

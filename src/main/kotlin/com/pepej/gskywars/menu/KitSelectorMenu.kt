@@ -4,14 +4,14 @@ import com.pepej.gskywars.model.Kit
 import com.pepej.gskywars.utils.asUser
 import com.pepej.gskywars.utils.msg
 import com.pepej.papi.item.ItemStackBuilder
-import com.pepej.papi.menu.Gui
+import com.pepej.papi.menu.Menu
 import com.pepej.papi.menu.scheme.MenuScheme
 import com.pepej.papi.menu.scheme.StandardSchemeMappings
 import com.pepej.papi.utils.Players
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 
-class KitSelectorMenu(player: Player) : Gui(player, 6, "Выбор набора") {
+class KitSelectorMenu(player: Player) : Menu(player, 6, "Выбор набора") {
     companion object {
 
         private val BORDERS_SCHEME: MenuScheme = MenuScheme(StandardSchemeMappings.STAINED_GLASS)

@@ -4,6 +4,7 @@ import com.pepej.papi.item.ItemStackBuilder
 import com.pepej.papi.terminable.TerminableConsumer
 import com.pepej.papi.terminable.module.TerminableModule
 import org.bukkit.Material
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
@@ -43,7 +44,15 @@ class TrollKit : Kit(
 
 ) {
     override fun equip(user: User) {
-        //
+        user.toPlayer.inventory.apply {
+            helmet = ItemStackBuilder.of(Material.LEATHER_HELMET).name("&dШапка Тролля").build()
+            itemInMainHand = ItemStackBuilder.of(Material.STICK).name("&dВолшебная палочка")
+                .enchant(Enchantment.DAMAGE_ALL, 5)
+                .enchant(Enchantment.KNOCKBACK, 2)
+                .build()
+
+        }
+
     }
 
     override fun setup(consumer: TerminableConsumer) {

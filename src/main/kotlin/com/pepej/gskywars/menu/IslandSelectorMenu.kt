@@ -5,12 +5,12 @@ import com.pepej.gskywars.model.Head
 import com.pepej.gskywars.model.Island
 import com.pepej.gskywars.utils.asUser
 import com.pepej.papi.item.ItemStackBuilder
-import com.pepej.papi.menu.Gui
+import com.pepej.papi.menu.Menu
 import com.pepej.papi.menu.scheme.MenuScheme
 import com.pepej.papi.menu.scheme.StandardSchemeMappings
 import org.bukkit.entity.Player
 
-class IslandSelectorMenu(player: Player) : Gui(player, 3, "&6Выберите остров") {
+class IslandSelectorMenu(player: Player) : Menu(player, 3, "&6Выберите остров") {
 
     companion object {
 

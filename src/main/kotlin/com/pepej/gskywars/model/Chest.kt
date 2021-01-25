@@ -1,14 +1,18 @@
 package com.pepej.gskywars.model
 
+import com.pepej.papi.hologram.individual.IndividualHologram
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @Serializable
 data class Chest(
     val id: Int,
     val position: Position,
     val rarity: Rarity,
-    var opened: Boolean = false
+    @Transient var opened: Boolean = false,
+    @Transient var updateHologram: IndividualHologram? = null,
 ) {
+
 
 
 
@@ -19,15 +23,5 @@ data class Chest(
         MYTHIC("Мистический")
 
     }
-
-
-//    override fun serialize(): JsonElement {
-//        return JsonBuilder.`object`()
-//            .add("id", id)
-//            .add("position", position)
-//            .add("rarity", rarity.rarName)
-//            .add("opened", opened)
-//            .build()
-//    }
 
 }
